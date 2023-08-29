@@ -1,7 +1,8 @@
 let users = [];
 
-// route ('/users')
-// alle User anzeigen
+/** ROUTE ('/users')*/
+// get
+// alle user anzeigen
 exports.getUsers = (req, res) => {
     if(users.length !== 0) {
         res.status(200).json({
@@ -15,7 +16,7 @@ exports.getUsers = (req, res) => {
     }
 }
 
-// route ('/users')
+// post
 // user erstellen
 exports.createUser = (req, res) => {
     const { id, firstname, lastname, email, password } = req.body;
@@ -27,8 +28,10 @@ exports.createUser = (req, res) => {
     });
 }
 
-// route ('/users/:id)
-// einen bestimmten User anzeigen
+
+/** ROUTE ('/users/:id') */
+// get
+// einen bestimmten user anzeigen
 exports.getUser = (req, res) => {
     // eingegebene userId
     const userId = req.params.id;
@@ -45,7 +48,8 @@ exports.getUser = (req, res) => {
     }
 }
 
-// bestimmten User bearbeiten
+// put
+// bestimmten user bearbeiten
 exports.updateUser = (req, res, next) => {
     const userId = req.params.id;
     const updateUser = req.body;
@@ -63,7 +67,8 @@ exports.updateUser = (req, res, next) => {
     }
 }
 
-// bestimmten User löschen
+// delete
+// bestimmten user löschen
 exports.deleteUser = (req, res, next) => {
     const userId = req.params.id;
     const user = users.find(user => user.id === userId);

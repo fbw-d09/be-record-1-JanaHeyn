@@ -1,85 +1,40 @@
-// Teilaufgabe 1 (lowdb)
+// Teilaufgabe 1 (lowdb) --> gelöscht
 // importieren folgender module (vorher müssen diese installiert werden!)
+
+/** EXTERNAL DEPENDENCIES */ 
+require('dotenv').config();
 const express = require('express');
-const path = require('path');
-const low = require('lowdb');
 const bodyParser = require('body-parser');
-// adapter importieren für synchrones arbeiten
-const FileSync = require('lowdb/adapters/FileSync');
 
-// instanz von express setzen
+/** IMPORTS */
+const { myMiddleware } = require('./middleware/myMiddleware');
+const recordRoutes = require('./routes/records');
+const userRoutes = require('./routes/users');
+const orderRoutes = require('./routes/orders');
+
+/** VARIABLES */
 const app = express();
+// const port = 5001;
+const port = process.env.PORT;
 
-const port = 5001;
-
-// adapter erstellen
-const adapter = new FileSync('db.json');
-
-// instanz von lowdb setzen
-const db = low(adapter);
-
+/** MIDDLEWARE */
+// external middleware
 app.use(bodyParser.urlencoded({ extended:true }));
 app.use(bodyParser.json());
-
-// Objekt mit werten für Datenbank:
-const defaultData = 
-{   
-    records: [
-        {
-            id: 1,
-            title: 'Lullaby',
-            artist: 'The Cure',
-            year: 1989,
-            price: 17.99
-        },
-        {
-            id: 2,
-            title: 'Lola',
-            artist: 'The Kinks',
-            year: 1970,
-            price: 15.99
-        }
-    ]
-}
-
-db.defaults(defaultData).write();
-
-app.get('/api/records', (req, res) => {
-
-    const records = db.get('records').value();
-
-    res.status(200).json(records);
-});
-
-app.post('/api/records', (req, res) => {
-
-    const { id, title, artist, year, price } = req.body;
-    const newRecord = { id, title, artist, year, price };
-
-    db.get('records').push(newRecord).write();
-
-    res.status(200).json({success: true, message: 'Daten erfolgreich hinzugefügt', data: newRecord })
-});
-
+// custom middleware
 // Teilaufgabe 2 (middleware)
-const { myMiddleware } = require('./middleware/myMiddleware');
-
 app.get('/api/records/middleware', myMiddleware, (req, res) => {
     console.log('Test...');
     res.send('middleware-test');
 })
 
+/** ROUTES */
 // Teilaufgabe 3: Routes
-const recordRoutes = require('./routes/records');
 app.use('/api/records', recordRoutes);
-
-const userRoutes = require('./routes/users');
 app.use('/api/users', userRoutes);
-
-const orderRoutes = require('./routes/orders');
 app.use('/api/orders', orderRoutes);
 
-// Error handling:
+/** ERROR HANDLING */
 // 1. Fehler übergeben:
 app.use((req, res, next) => {
     const error = new Error('Not Found');
@@ -97,6 +52,8 @@ app.use((error, req, res, next) => {
     });
 });
 
+
+/** LISTENER */
 app.listen(port, () => {
     console.log(`Der Server läuft auf Port ${port}`);
 })

@@ -1,5 +1,8 @@
 let records = [];
 
+/** ROUTE ('/records') */
+// get
+// alle records anzeigen
 exports.getRecords = (req, res, next) => {
     if(records.length !== 0) {
         res.status(200).json({
@@ -13,6 +16,8 @@ exports.getRecords = (req, res, next) => {
     }
 }
 
+// post
+// record erstellen
 exports.createRecord = (req, res, next) => {
     const newRecord = {
         id: req.body.id,
@@ -28,7 +33,10 @@ exports.createRecord = (req, res, next) => {
     });
 }
 
-// bestimmtes Record bekommen
+
+/** ROUTE ('/records/:id') */
+// get
+// bestimmtes record bekommen
 // wenn ('/:id') dann auch req.params.id
 // wenn ('/:recordId') dann auch req.params.recordId
 exports.getRecord = (req, res, next) => {
@@ -47,7 +55,8 @@ exports.getRecord = (req, res, next) => {
     }
 }
 
-// bestimmtes Record bearbeiten
+// put
+// bestimmtes record bearbeiten
 exports.updateRecord = (req, res, next) => {
     const recordId = req.params.id;
     const updateRecord = req.body;
@@ -65,7 +74,8 @@ exports.updateRecord = (req, res, next) => {
     }
 }
 
-// bestimmtes Record löschen
+// delete
+// bestimmtes record löschen
 exports.deleteRecord = (req, res, next) => {
     const recordId = req.params.id;
     const record = records.find(record => record.id === recordId);

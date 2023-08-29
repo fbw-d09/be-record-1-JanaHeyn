@@ -1,5 +1,9 @@
 let orders = []
 
+
+/** ROUTE ('/orders') */
+// get
+// alle order anzeigen
 exports.getOrders = (req, res, next) => {
     if(orders.length !== 0) {
         res.status(200).json({
@@ -13,6 +17,9 @@ exports.getOrders = (req, res, next) => {
     }
 }
 
+
+// post
+// order erstellen
 exports.createOrder = (req, res, next) => {
     const newOrder = {
         id: req.body.id,
@@ -27,6 +34,10 @@ exports.createOrder = (req, res, next) => {
     });
 }
 
+
+/** ROUTE ('/orders/:id') */
+// get
+// einen bestimmten order anzeigen
 exports.getOrder = (req, res, next) => {
     const orderId = req.params.id;
     const order = orders.find(order => order.id === orderId);
@@ -46,6 +57,8 @@ exports.getOrder = (req, res, next) => {
 }
 
 
+// delete
+// einen bestimmten order löschen
 exports.deleteOrder = (req, res, next) => {
     const orderId = req.params.id;
     const order = orders.find(order => order.id === orderId);

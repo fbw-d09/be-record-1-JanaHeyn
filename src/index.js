@@ -1,21 +1,27 @@
-// Teilaufgabe 1 (lowdb) --> gelöscht
 // importieren folgender module (vorher müssen diese installiert werden!)
 
 /** EXTERNAL DEPENDENCIES */ 
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+
 
 /** IMPORTS */
 const { myMiddleware } = require('./middleware/myMiddleware');
-const recordRoutes = require('./routes/records');
 const userRoutes = require('./routes/users');
+const recordRoutes = require('./routes/records');
 const orderRoutes = require('./routes/orders');
+
 
 /** VARIABLES */
 const app = express();
 // const port = 5001;
 const port = process.env.PORT;
+const databaseUrl = `${process.env.DB_URL}/${process.env.DB_NAME}`;
+const db = mongoose.connect(databaseUrl);
+
+
 
 /** MIDDLEWARE */
 // external middleware
@@ -28,11 +34,15 @@ app.get('/api/records/middleware', myMiddleware, (req, res) => {
     res.send('middleware-test');
 })
 
+
+
 /** ROUTES */
 // Teilaufgabe 3: Routes
-app.use('/api/records', recordRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/records', recordRoutes);
 app.use('/api/orders', orderRoutes);
+
+
 
 /** ERROR HANDLING */
 // 1. Fehler übergeben:
@@ -51,6 +61,7 @@ app.use((error, req, res, next) => {
         }
     });
 });
+
 
 
 /** LISTENER */

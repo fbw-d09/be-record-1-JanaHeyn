@@ -1,7 +1,3 @@
-require('dotenv').config();
-
-const crypto = require('crypto');
-
 const { Schema, model } = require('mongoose');
 
 const { userProfileSchema } = require('./UserProfile');
@@ -17,20 +13,10 @@ const user = new Schema({
     },
     role: { type: String, default: 'member' },
     email: String,
+    password: String,
     profile: userProfileSchema
-    // password: { type: String, required: true }
 
-}, { timestamps: true })
-.post('save', (doc) => console.log(doc));
-
-user.methods.hashPassword = (password) =>
-{
-    const secret = process.env.SECRET_KEY;
-
-    const hash = crypto.createHmac('sha256', secret).update(password).digest('hex');
-
-    return hash;
-}
+}, { timestamps: true });
 
 const userModel = new model('User', user, 'users');
 

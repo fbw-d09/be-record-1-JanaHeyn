@@ -1,8 +1,8 @@
 const { Schema, model } = require('mongoose');
 
 const record = new Schema({
-    title: String,
-    artist: String,
+    title: { type: String, trim: true },
+    artist: { type: String, trim: true },
     year: Number,
     price: Number
 }, { timestamps: true });

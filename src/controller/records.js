@@ -1,37 +1,28 @@
-let records = [];
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const Record = require('../models/Record.js');
 
 /** ROUTE ('/records') */
 // get
 // alle records anzeigen
 exports.getRecords = (req, res, next) => {
-    if(records.length !== 0) {
+    Record
+    .find()
+    .then(records => {
         res.status(200).json({
-            message: 'Liste aller records',
-            records: records
-        });
-    } else {
-        res.status(404).json({
-            message: 'Noch keine records vorhanden'
+            success: true,
+            amount: records.length,
+            data: records
         })
-    }
+    })
+    .catch(err => console.log(err.message))
 }
 
 // post
 // record erstellen
-exports.createRecord = (req, res, next) => {
-    const newRecord = {
-        id: req.body.id,
-        title: req.body.title,
-        artist: req.body.artist,
-        year: req.body.year,
-        price: req.body.price
-    }
-    records.push(newRecord);
-    res.status(201).json({
-        message: 'Record erfolgreich erstellt und hinzugefügt',
-        'neues Record': newRecord
-    });
-}
+// exports.createRecord = (req, res, next) => {
+    
+// }
 
 
 /** ROUTE ('/records/:id') */
@@ -41,54 +32,60 @@ exports.createRecord = (req, res, next) => {
 // wenn ('/:recordId') dann auch req.params.recordId
 exports.getRecord = (req, res, next) => {
     // eingegebene recordId
-    const recordId = req.params.id;
+    const { id } = req.params;
     // record.id aus vorhandenem array mit eingegebener recordID vergleichen
-    const record = records.find(record => record.id === recordId);
-
-    if(record) {
+    Record
+    .findById(id)
+    .then(record => {
         res.status(200).json({
-            message: 'Record gefunden',
-            record: record
+            success: true,
+            data: record
         })
-    } else {
-        res.status(404).send('Record liegt uns noch nicht vor')
-    }
+    })
+    .catch(err => console.log(err.message))
 }
 
 // put
 // bestimmtes record bearbeiten
 exports.updateRecord = (req, res, next) => {
-    const recordId = req.params.id;
-    const updateRecord = req.body;
-    const recordIndex = records.findIndex(record => record.id === recordId);
-    if(recordIndex !== -1) {
-        records[recordIndex] = { ...records[recordIndex], ...updateRecord };
+    const { id } = req.params;
+
+    Record
+    .findByIdAndUpdate(id,
+        {
+            title: req.body.title,
+            artist: req.body.artist,
+            year: req.body.year,
+            price: req.body.price
+        },
+        {
+            new: true
+        })
+    .then(record => {
         res.status(201).json({
-            message: 'Record aktualisiert',
-            user: updateRecord
+            success: true,
+            updated: record !== null ? true : false,
+            data:record
         })
-    } else {
-        res.status(404).json({
-            message: 'Record nicht gefunden'
-        })
-    }
+    })
+    .catch(err => console.log(err.messsage))
+    
 }
 
 // delete
 // bestimmtes record löschen
 exports.deleteRecord = (req, res, next) => {
-    const recordId = req.params.id;
-    const record = records.find(record => record.id === recordId);
+    const { id } = req.params;
 
-    if(record) {
-        records = records.filter(record => record.id !== recordId);
-        res.status(200).json({
-            message: 'Record wurde erfolgreich gelöscht',
-            record: record
+    Record
+    .findByIdAndDelete(id)
+    .then(record => {
+        res.status(201).json({
+            success: true,
+            deleted: record !== null ? true : false,
+            data: record
         })
-    } else {
-        res.status(404).json({
-            message: 'Record leider nicht gefunden'
-        })
-    }
+    })
+    .catch(err => console.log(err.message))
+    
 }

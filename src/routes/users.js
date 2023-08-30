@@ -7,10 +7,10 @@ router.route('/')
 .get(userController.getUsers);
 // .post(userController.createUser);
 
-// /api/users/byID/
+// /api/users/idnummer/
 router.route('/:id/')
 .get(userController.getUser)
-// .put(userController.updateUser)
+.put(userController.updateUser)
 .delete(userController.deleteUser);
 
 module.exports = router;

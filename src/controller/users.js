@@ -1,9 +1,11 @@
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 const User = require('../models/User.js');
 
 /** ROUTE ('/users')*/
 // get
 // alle user anzeigen
-exports.getUsers = (req, res) => {
+exports.getUsers = (req, res, next) => {
     User
     .find()
     .then(users => {
@@ -30,9 +32,8 @@ exports.getUsers = (req, res) => {
 /** ROUTE ('/users/id/') */
 // get
 // einen bestimmten user anhand der ID anzeigen
-exports.getUser = (req, res) => {
+exports.getUser = (req, res, next) => {
     const { id } = req.params;
-    // console.log(req.params);
 
     User
     .findById(id)
@@ -47,13 +48,33 @@ exports.getUser = (req, res) => {
 
 // put
 // bestimmten user bearbeiten
-// exports.updateUser = (req, res, next) => {
-//     const { id } = req.params;
+exports.updateUser = (req, res, next) => {
+    const { id } = req.params;
 
-//     User
-//     .findByIdAndUpdate(id)
-    
-// }
+    User
+    .findByIdAndUpdate(id,
+    {
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        username: req.body.username,
+        birthday: req.body.birthday,
+        role: req.body.role,
+        email: req.body.email,
+        password: req.body.password, 
+        profile: req.body.profile
+    },
+    {
+        new: true,
+    })
+    .then(user => {
+        res.status(200).json({
+            success: true,
+            updated: user !== null ? true : false,
+            data: user
+        });
+    })
+    .catch(err => console.log(err.message))
+};
 
 // delete
 // bestimmten user löschen

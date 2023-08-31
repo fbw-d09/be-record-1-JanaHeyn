@@ -1,76 +1,87 @@
-let orders = []
-
+const bodyParser = require('body-parser');
+// const mongoose = require('mongoose');
+const Order = require('../models/Order.js');
 
 /** ROUTE ('/orders') */
 // get
 // alle order anzeigen
 exports.getOrders = (req, res, next) => {
-    if(orders.length !== 0) {
+    Order
+    .find()
+    .then(orders => {
         res.status(200).json({
-            message: 'Liste aller Bestellungen',
-            orders: orders
-        });
-    } else {
-        res.status(404).json({
-            message: 'Noch keine Bestellungen vorhanden'
+            success: true,
+            amount: orders.length,
+            data: orders
         })
-    }
+    }) 
+    .catch(err => console.log(err.message))
 }
 
 
 // post
 // order erstellen
-exports.createOrder = (req, res, next) => {
-    const newOrder = {
-        id: req.body.id,
-        title: req.body.title,
-        artist: req.body.artist,
-        quantity: req.body.quantity
-    }
-    orders.push(newOrder);
-    res.status(201).json({
-        message: 'Bestellung erfolgreich erstellt',
-        order: newOrder
-    });
-}
+// exports.createOrder = (req, res, next) => {
+    
+// }
 
 
 /** ROUTE ('/orders/:id') */
 // get
 // einen bestimmten order anzeigen
 exports.getOrder = (req, res, next) => {
-    const orderId = req.params.id;
-    const order = orders.find(order => order.id === orderId);
-    if(order) {
+    const { id } = req.params;
+
+    Order
+    .findById(id)
+    .then(order => {
         res.status(200).json({
-            message: 'Bestelldetails',
-            id: orderId,
-            title: req.body.title,
-            artist: req.body.artist,
-            quantity: req.body.quantity 
+            success: true,
+            data: order
         })
-    } else {
-        res.status(404).json({
-            message: 'Bestellnummer nicht vorhanden'
-        })
-    }
+    })
+    .catch(err => console.log(err.message))
 }
 
+// put
+// bestimmte order bearbeiten
+exports.updateOrder = (req, res, next) => {
+    const { id } = req.params;
+
+    Order
+    .findByIdAndUpdate(id,
+    {
+        title: req.body.title,
+        artist: req.body.artist,
+        quantity: req.body.quantity
+        
+    },
+    {
+        new: true
+    })
+    .then(order => {
+        res.status(201).json({
+            success: true,
+            updated: order !== null ? true : false,
+            data: order
+        })
+    })
+    .catch(err => console.log(err.messsage))
+}
 
 // delete
 // einen bestimmten order löschen
 exports.deleteOrder = (req, res, next) => {
-    const orderId = req.params.id;
-    const order = orders.find(order => order.id === orderId);
-    if(order) {
-        orders = orders.filter(order => order.id !== orderId)
-        res.status(200).json({
-            message: 'Order wurde erfolgreich gelöscht',
-            Bestellung: order
+    const { id } = req.params;
+
+    Order
+    .findByIdAndDelete(id)
+    .then(order => {
+        res.status(201).json({
+            success: true,
+            deleted: order !== null ? true : false,
+            data: order
         })
-    } else {
-        res.status(404).json({
-            message: 'Order nicht vorhanden'
-        })
-    }
+    })
+    .catch(err => console.log(err.message))
 }

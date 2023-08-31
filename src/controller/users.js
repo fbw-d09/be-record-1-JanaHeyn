@@ -67,7 +67,7 @@ exports.updateUser = (req, res, next) => {
         new: true,
     })
     .then(user => {
-        res.status(200).json({
+        res.status(201).json({
             success: true,
             updated: user !== null ? true : false,
             data: user

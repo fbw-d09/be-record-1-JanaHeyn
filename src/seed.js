@@ -14,37 +14,37 @@ const User = require('./models/User.js');
 const Order = require('./models/Order.js');
 
 
-// const generateUsers = (num) => 
-// {
-//     const users = [];
-//     // const newUser = new User();
+const generateUsers = (num) => 
+{
+    const users = [];
+    // const newUser = new User();
     
-//     for (let i = 0; i < num; i++) {
+    for (let i = 0; i < num; i++) {
         
-//         const firstname = chance.first();
-//         const lastname = chance.last();
-//         const username = chance.animal({ type: 'pet' });
-//         const birthday = chance.birthday({string: true, american: false});
-//         const role = Math.random() < 0.4 ? 'admin' : 'member';
-//         const email = chance.email({ domain: 'example.com' });
-//         const password = chance.hash();
-//         const profile = { darkmode: true };
+        const firstname = chance.first();
+        const lastname = chance.last();
+        const username = chance.animal({ type: 'pet' });
+        const birthday = chance.birthday({string: true, american: false});
+        const role = Math.random() < 0.4 ? 'admin' : 'member';
+        const email = chance.email({ domain: 'example.com' });
+        const password = chance.hash();
+        const profile = { darkmode: true };
 
 
-//         users.push({
-//             firstname,
-//             lastname,
-//             username,
-//             birthday,
-//             role,
-//             email,
-//             password,
-//             profile 
-//         })
+        users.push({
+            firstname,
+            lastname,
+            username,
+            birthday,
+            role,
+            email,
+            password,
+            profile 
+        })
 
-//     }
-//     return users;
-// }
+    }
+    return users;
+}
 
 const generateRecords = (num) => 
 {
@@ -66,35 +66,35 @@ const generateRecords = (num) =>
     return records;
 }
 
-// const generateOrders = (num) => 
-// {
-//     const orders = [];
+const generateOrders = (num) => 
+{
+    const orders = [];
     
-//     for (let i = 0; i < num; i++) {
-//         const title = chance.sentence({ words: 5 });
-//         const artist = chance.sentence({ words: 2 });
-//         const quantity = chance.integer({ min: 1, max: 10 });
+    for (let i = 0; i < num; i++) {
+        const title = chance.sentence({ words: 2 });
+        const artist = chance.animal({ type: 'ocean' });
+        const quantity = chance.integer({ min: 1, max: 10 });
 
-//         orders.push({
-//             title,
-//             artist,
-//             quantity
-//         });
-//     }
-//     return orders;
-// }
+        orders.push({
+            title,
+            artist,
+            quantity
+        });
+    }
+    return orders;
+}
 
 const seed = async () => 
 {
 
-    // await User
-    // .insertMany(generateUsers(5))
-    // .then(users => {
-    //     console.log('Neue User angelegt', users);
-    // })
-    // .catch(err => {
-    //     console.log(err.message)   
-    // })
+    await User
+    .insertMany(generateUsers(5))
+    .then(users => {
+        console.log('Neue User angelegt', users);
+    })
+    .catch(err => {
+        console.log(err.message)   
+    })
     await Record
     .insertMany(generateRecords(3))
     .then(records => {
@@ -103,11 +103,11 @@ const seed = async () =>
     .catch(err => {
         console.log(err.message);
     })
-    // await Order
-    // .insertMany(generateOrders(1))
-    // .then(orders => {
-    //     console.log(orders);
-    // })
+    await Order
+    .insertMany(generateOrders(5))
+    .then(orders => {
+        console.log(orders);
+    })
 
     await mongoose.connection.close();
 

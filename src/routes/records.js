@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const {getRecords, getRecord, updateRecord, deleteRecord} = require('../controller/records');
+const {getRecords, getRecord, createRecord, updateRecord, deleteRecord} = require('../controller/records');
 
 // /api/records
 router.route('/')
-.get(getRecords);
-// .post(createRecord);
+.get(getRecords)
+.post(createRecord);
 
 // /api/records/idnummer
 router.route('/:id')

@@ -20,9 +20,19 @@ exports.getRecords = (req, res, next) => {
 
 // post
 // record erstellen
-// exports.createRecord = (req, res, next) => {
+exports.createRecord = (req, res, next) => {
+    Record
+    .create(req.body)
+    .then(record => {
+        res.status(200).json({
+            success: true,
+            data: record,
+            message: 'Der record wurde angelegt'
+        })
+    })
+    .catch(err => console.log(err.message))
     
-// }
+};
 
 
 /** ROUTE ('/records/:id') */
@@ -49,15 +59,16 @@ exports.getRecord = (req, res, next) => {
 // bestimmtes record bearbeiten
 exports.updateRecord = (req, res, next) => {
     const { id } = req.params;
+    const updatedRecord = req.body;
 
     Record
-    .findByIdAndUpdate(id,
-        {
-            title: req.body.title,
-            artist: req.body.artist,
-            year: req.body.year,
-            price: req.body.price
-        },
+    .findByIdAndUpdate(id, updatedRecord,
+        // {
+        //     title: req.body.title,
+        //     artist: req.body.artist,
+        //     year: req.body.year,
+        //     price: req.body.price
+        // },
         {
             new: true
         })

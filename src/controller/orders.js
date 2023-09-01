@@ -21,9 +21,19 @@ exports.getOrders = (req, res, next) => {
 
 // post
 // order erstellen
-// exports.createOrder = (req, res, next) => {
+exports.createOrder = (req, res, next) => {
+    Order
+    .create(req.body)
+    .then(order => {
+        res.status(200).json({
+            success: true,
+            data: order,
+            message: 'Die order wurde angelegt'
+        })
+    })
+    .catch(err => console.log(err.message))
     
-// }
+}
 
 
 /** ROUTE ('/orders/:id') */

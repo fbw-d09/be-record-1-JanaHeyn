@@ -88,7 +88,7 @@ const seed = async () =>
 {
 
     await User
-    .insertMany(generateUsers(5))
+    .insertMany(generateUsers(4))
     .then(users => {
         console.log('Neue User angelegt', users);
     })
@@ -96,7 +96,7 @@ const seed = async () =>
         console.log(err.message)   
     })
     await Record
-    .insertMany(generateRecords(3))
+    .insertMany(generateRecords(4))
     .then(records => {
         console.log(records);
     })
@@ -104,7 +104,7 @@ const seed = async () =>
         console.log(err.message);
     })
     await Order
-    .insertMany(generateOrders(5))
+    .insertMany(generateOrders(4))
     .then(orders => {
         console.log(orders);
     })

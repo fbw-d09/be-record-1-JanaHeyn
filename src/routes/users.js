@@ -4,8 +4,8 @@ const userController = require('../controller/users');
 
 // /api/users
 router.route('/')
-.get(userController.getUsers);
-// .post(userController.createUser);
+.get(userController.getUsers)
+.post(userController.createUser);
 
 // /api/users/idnummer/
 router.route('/:id/')

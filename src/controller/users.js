@@ -20,13 +20,18 @@ exports.getUsers = (req, res, next) => {
 
 // post
 // user erstellen
-// exports.createUser = (req, res) => {
-//     res.status(201).json({
-//         success: true,
-//         message: 'Neuer user wurde erstellt'
-//         // data: user
-//     })
-// }
+exports.createUser = (req, res, next) => {
+    User
+    .create(req.body)
+    .then(user => {
+        res.status(200).json({
+            success: true,
+            data: user,
+            message: 'Der User wurde angelegt'
+        })
+    })
+    .catch(err => console.log(err.message))
+};
 
 
 /** ROUTE ('/users/id/') */

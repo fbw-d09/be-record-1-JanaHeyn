@@ -19,7 +19,10 @@ const app = express();
 // const port = 5001;
 const port = process.env.PORT;
 const databaseUrl = `${process.env.DB_URL}/${process.env.DB_NAME}`;
-const db = mongoose.connect(databaseUrl);
+const db = mongoose
+    .connect(databaseUrl)
+    .then(() => console.log('Connected to database'))
+    .catch((err) => console.log('Connection failed', err.message));
 
 
 
@@ -66,5 +69,5 @@ app.use((error, req, res, next) => {
 
 /** LISTENER */
 app.listen(port, () => {
-    console.log(`Der Server läuft auf Port ${port}`);
+    console.log(`server running on port ${port}`);
 })

@@ -6,111 +6,76 @@ const chance = new Chance();
 
 /** ERSTELLUNG DER VERBINDUNG */
 const databaseUrl = `${process.env.DB_URL}/${process.env.DB_NAME}`;
-mongoose.connect(databaseUrl);
+mongoose
+.connect(databaseUrl)
+.then(() => console.log('connected to database'))
+.catch((err) => console.log('connection failed', err.message));
 
 /** IMPORTS DER MODELS */
 const Record = require('./models/Record.js');
 const User = require('./models/User.js');
 const Order = require('./models/Order.js');
 
+const generateFakeData = async () => {
+    try {
+        let fakeUsers = []
+        const fakeRecords = [];
+        const fakeOrders = [];
 
-const generateUsers = (num) => 
-{
-    const users = [];
-    // const newUser = new User();
-    
-    for (let i = 0; i < num; i++) {
-        
-        const firstname = chance.first();
-        const lastname = chance.last();
-        const username = chance.animal({ type: 'pet' });
-        const birthday = chance.birthday({string: true, american: false});
-        const role = Math.random() < 0.4 ? 'admin' : 'member';
-        const email = chance.email({ domain: 'example.com' });
-        const password = chance.hash();
-        const profile = { darkmode: true };
+        // fakeUsers
+        for (let i = 0; i < 5; i++) {
+            const newFakeUser = {
+                firstname: chance.first(),
+                lastname: chance.last(),
+                username: chance.animal({ type: 'pet' }),
+                role: Math.random() < 0.4 ? 'admin' : 'member',
+                birthday: chance.birthday({string: true, american: false}),
+                email: chance.email({ domain: 'example.com' }),
+                password: chance.hash({length: 10}),
+                profile: { darkmode: true },
+            };
+            fakeUsers.push(newFakeUser);
 
+            await User.insertMany(newFakeUser);
+        }
 
-        users.push({
-            firstname,
-            lastname,
-            username,
-            birthday,
-            role,
-            email,
-            password,
-            profile 
-        })
+        // fakeRecords
+        for (let i = 0; i < 5; i++) {
+            const record = new Record({
+                firstname: chance.first(),
+                lastname: chance.last(),
+                username: chance.animal({ type: 'pet' }),
+                role: Math.random() < 0.4 ? 'admin' : 'member',
+                birthday: chance.birthday({string: true, american: false}),
+                email: chance.email({ domain: 'example.com' }),
+                password: chance.hash({length: 10}),
+                profile: { darkmode: true },
+            });
+            fakeUsers.push(record);
+
+            await Record.insertMany(fakeRecords);
+        }
+
+        //fakeOrders
+        for (let i = 0; i < 5; i++) {
+            const title = chance.sentence({ words: 2 });
+            const artist = chance.animal({ type: 'ocean' });
+            const quantity = chance.integer({ min: 1, max: 10 });
+
+            fakeOrders.push({
+                title,
+                artist,
+                quantity
+            });
+
+            await Order.insertMany(fakeOrders);
+        }
+
+    } catch (error) {
+        console.log(error);
 
     }
-    return users;
+
+    mongoose.connection.close();
 }
-
-const generateRecords = (num) => 
-{
-    const records = [];
-    
-    for (let i = 0; i < num; i++) {
-        const title = chance.sentence({ words: 2 });
-        const artist = chance.animal({ type: 'ocean' });
-        const year = chance.year({ min: 1900, max:2023 });
-        const price = chance.natural({ min: 1, max: 20 });
-
-        records.push({
-            title,
-            artist,
-            year,
-            price
-        });
-    }
-    return records;
-}
-
-const generateOrders = (num) => 
-{
-    const orders = [];
-    
-    for (let i = 0; i < num; i++) {
-        const title = chance.sentence({ words: 2 });
-        const artist = chance.animal({ type: 'ocean' });
-        const quantity = chance.integer({ min: 1, max: 10 });
-
-        orders.push({
-            title,
-            artist,
-            quantity
-        });
-    }
-    return orders;
-}
-
-const seed = async () => 
-{
-
-    await User
-    .insertMany(generateUsers(4))
-    .then(users => {
-        console.log('Neue User angelegt', users);
-    })
-    .catch(err => {
-        console.log(err.message)   
-    })
-    await Record
-    .insertMany(generateRecords(4))
-    .then(records => {
-        console.log(records);
-    })
-    .catch(err => {
-        console.log(err.message);
-    })
-    await Order
-    .insertMany(generateOrders(4))
-    .then(orders => {
-        console.log(orders);
-    })
-
-    await mongoose.connection.close();
-
-}
-
-seed();
+generateFakeData();

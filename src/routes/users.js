@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const userController = require('../controller/users');
+const userController = require('../controller/usersController.js');
 
 // /api/users
 router.route('/')

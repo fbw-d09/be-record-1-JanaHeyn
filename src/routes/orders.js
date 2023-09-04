@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {getOrders, getOrder,createOrder, updateOrder, deleteOrder} = require('../controller/orders');
+const {getOrders, getOrder,createOrder, updateOrder, deleteOrder} = require('../controller/ordersController.js');
 
 // /api/orders
 router.route('/')

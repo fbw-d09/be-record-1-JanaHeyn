@@ -1,5 +1,3 @@
-const bodyParser = require('body-parser');
-// const mongoose = require('mongoose');
 const Order = require('../models/Order.js');
 
 /** ROUTE ('/orders') */

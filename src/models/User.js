@@ -1,11 +1,12 @@
 const { Schema, model } = require('mongoose');
 
 const { userProfileSchema } = require('./UserProfile.js');
+const { addressSchema } = require('./Address.js');
 
-const user = new Schema({
-    firstname: { type: String, trim: true },
-    lastname: { type: String, trim: true },
-    username: { type: String, unique: true, trim: true },
+const userSchema = new Schema({
+    firstname: { type: String, trim: true, required: true },
+    lastname: { type: String, trim: true, required: true },
+    username: { type: String, unique: true, trim: true, required: true },
     birthday: {
         day: Number,
         month: Number,
@@ -14,10 +15,11 @@ const user = new Schema({
     role: { type: String, default: 'member' },
     email: String,
     password: String,
-    profile: userProfileSchema
+    profile: userProfileSchema,
+    address: addressSchema
 
 }, { timestamps: true });
 
-const userModel = new model('User', user, 'users');
+const User = new model('User', userSchema, 'users');
 
-module.exports = userModel;
+module.exports = User;

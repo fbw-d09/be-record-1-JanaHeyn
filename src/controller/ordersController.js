@@ -1,95 +1,105 @@
 const Order = require('../models/Order.js');
 
 /** ROUTE ('/orders') */
-// get
-// alle order anzeigen
-exports.getOrders = (req, res, next) => {
-    Order
-    .find()
-    .then(orders => {
-        res.status(200).json({
-            success: true,
-            amount: orders.length,
-            data: orders
-        })
-    }) 
-    .catch(err => console.log(err.message))
-}
-
-
 // post
 // order erstellen
-exports.createOrder = (req, res, next) => {
-    Order
-    .create(req.body)
-    .then(order => {
-        res.status(200).json({
+const createOrder = async(req, res, next) => {
+    try {
+        const { quantity, record } = req.body;
+        const newOrder = new Order({ quantity, record });
+
+        await newOrder.save();
+        res.status(201).json({
             success: true,
-            data: order,
-            message: 'Die order wurde angelegt'
-        })
-    })
-    .catch(err => console.log(err.message))
-    
+            message: 'New order created!',
+            data: newOrder
+        });
+
+    } catch(error) {
+        next(error);
+    } 
+}
+
+// get
+// alle order anzeigen
+const getOrders = async(req, res, next) => {
+    try {
+        const orders = await Order.find();
+        res.status(200).json({
+            amount: orders.length,
+            data: orders
+        });
+
+    } catch(error) {
+        next(error);
+    }
 }
 
 
 /** ROUTE ('/orders/:id') */
 // get
 // einen bestimmten order anzeigen
-exports.getOrder = (req, res, next) => {
-    const { id } = req.params;
+const getOrder = async(req, res, next) => {
+    try {
+        const { id } = req.params;
+        const order = await Order.findById(id);
+        res.status(200).json(order);
 
-    Order
-    .findById(id)
-    .then(order => {
-        res.status(200).json({
-            success: true,
-            data: order
-        })
-    })
-    .catch(err => console.log(err.message))
+    } catch(error) {
+        next(error);
+    }
 }
 
 // put
 // bestimmte order bearbeiten
-exports.updateOrder = (req, res, next) => {
-    const { id } = req.params;
+const updateOrder = async(req, res, next) => {
+    try {
+        const { id } = req.params;
+        const updatedOrder = req.body;
 
-    Order
-    .findByIdAndUpdate(id,
-    {
-        title: req.body.title,
-        artist: req.body.artist,
-        quantity: req.body.quantity
-        
-    },
-    {
-        new: true
-    })
-    .then(order => {
+        const order = await Order.findByIdAndUpdate(id, updatedOrder, { new: true });
         res.status(201).json({
-            success: true,
-            updated: order !== null ? true : false,
+            message: 'Order updated!',
             data: order
-        })
-    })
-    .catch(err => console.log(err.messsage))
+        });
+    } catch(error) {
+        next(error);
+    }
 }
 
 // delete
 // einen bestimmten order löschen
-exports.deleteOrder = (req, res, next) => {
-    const { id } = req.params;
+const deleteOrder = async(req, res, next) => {
+    try {
+        const { id } = req.params;
 
-    Order
-    .findByIdAndDelete(id)
-    .then(order => {
+        const order = await Order.findByIdAndDelete(id);
+        res.status(201).json({
+            message: 'Order deleted!',
+            data: order
+        });
+    } catch(error) {
+        next(error);
+    }
+}
+
+const deleteOrders = async(req, res, next) => {
+    try {
+        await Order.deleteMany();
         res.status(201).json({
             success: true,
-            deleted: order !== null ? true : false,
-            data: order
-        })
-    })
-    .catch(err => console.log(err.message))
+            message: 'All orders deleted'
+        });
+    } catch(error) {
+        next(error);
+    }
+}
+
+module.exports = {
+    getOrder,
+    getOrders,
+    createOrder,
+    deleteOrder,
+    updateOrder,
+    deleteOrders
 }

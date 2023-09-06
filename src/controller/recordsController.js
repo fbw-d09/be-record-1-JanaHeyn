@@ -1,35 +1,40 @@
-const Record = require('../models/Record.js');
+const {Record} = require('../models/Record.js');
 
 /** ROUTE ('/records') */
-// get
-// alle records anzeigen
-exports.getRecords = (req, res, next) => {
-    Record
-    .find()
-    .then(records => {
-        res.status(200).json({
-            success: true,
-            amount: records.length,
-            data: records
-        })
-    })
-    .catch(err => console.log(err.message))
-}
-
 // post
 // record erstellen
-exports.createRecord = (req, res, next) => {
-    Record
-    .create(req.body)
-    .then(record => {
-        res.status(200).json({
+const createRecord = async(req, res, next) => {
+    try{
+        const { title, artist, year, price } = req.body;
+        const newRecord = new Record({ title, artist, year, price });
+
+        await newRecord.save();
+        res.status(201).json({
             success: true,
-            data: record,
-            message: 'Der record wurde angelegt'
-        })
-    })
-    .catch(err => console.log(err.message))
-    
+            message: 'New record created!',
+            data: newRecord
+        });
+
+    } catch(error) {
+        next(error);
+    }
+};
+
+
+// get
+// alle records anzeigen
+const getRecords = async(req, res, next) => {
+    try {
+        const records = await Record.find();
+        res.status(200).json({
+            amount: records.length,
+            data: records
+        });
+
+    } catch(error) {
+        console.log({error});
+        next(error);
+    }
 };
 
 
@@ -38,63 +43,71 @@ exports.createRecord = (req, res, next) => {
 // bestimmtes record bekommen
 // wenn ('/:id') dann auch req.params.id
 // wenn ('/:recordId') dann auch req.params.recordId
-exports.getRecord = (req, res, next) => {
-    // eingegebene recordId
-    const { id } = req.params;
-    // record.id aus vorhandenem array mit eingegebener recordID vergleichen
-    Record
-    .findById(id)
-    .then(record => {
-        res.status(200).json({
-            success: true,
-            data: record
-        })
-    })
-    .catch(err => console.log(err.message))
-}
+const getRecord = async(req, res, next) => {
+    try {
+        const { id } = req.params;
+        const record = await Record.findById(id);
+        res.status(200).json(record);
+
+    } catch(error) {
+        next(error);
+    }
+};
 
 // put
 // bestimmtes record bearbeiten
-exports.updateRecord = (req, res, next) => {
-    const { id } = req.params;
-    const updatedRecord = req.body;
+const updateRecord = async(req, res, next) => {
+    try {
+        const { id } = req.params;
+        const updatedRecord = req.body;
 
-    Record
-    .findByIdAndUpdate(id, updatedRecord,
-        // {
-        //     title: req.body.title,
-        //     artist: req.body.artist,
-        //     year: req.body.year,
-        //     price: req.body.price
-        // },
-        {
-            new: true
-        })
-    .then(record => {
+        const record = await Record.findByIdAndUpdate(id, updatedRecord, { new: true });
         res.status(201).json({
-            success: true,
-            updated: record !== null ? true : false,
-            data:record
-        })
-    })
-    .catch(err => console.log(err.messsage))
-    
-}
+            message: 'Record updated!',
+            data: record
+        });
+
+    } catch(error) {
+        next(error);
+    }    
+};
 
 // delete
 // bestimmtes record löschen
-exports.deleteRecord = (req, res, next) => {
-    const { id } = req.params;
-
-    Record
-    .findByIdAndDelete(id)
-    .then(record => {
+const deleteRecord = async(req, res, next) => {
+    try {
+        const record = await Record.findByIdAndDelete(req.params.id, req.body, {next:true});
         res.status(201).json({
             success: true,
-            deleted: record !== null ? true : false,
+            message: 'Record deleted',
             data: record
-        })
-    })
-    .catch(err => console.log(err.message))
-    
-}
+        });
+
+    } catch(error) {
+        next(error);
+    }    
+};
+
+// delete
+// alle records löschen
+const deleteRecords = async(req, res, next) => {
+    try {
+        await Record.deleteMany();
+        res.status(201).json({
+            success: true,
+            message: 'All records deleted!'
+        });
+
+    } catch(error) {
+        next(error);
+    }
+};
+
+module.exports = {
+    getRecord,
+    getRecords,
+    createRecord,
+    updateRecord,
+    deleteRecord,
+    deleteRecords
+};

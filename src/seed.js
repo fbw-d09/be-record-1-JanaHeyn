@@ -12,9 +12,9 @@ mongoose
 .catch((err) => console.log('connection failed', err.message));
 
 /** IMPORTS DER MODELS */
-const Record = require('./models/Record.js');
 const User = require('./models/User.js');
 const Order = require('./models/Order.js');
+const {Record} = require('./models/Record.js');
 
 const generateFakeData = async () => {
     try {
@@ -24,56 +24,48 @@ const generateFakeData = async () => {
 
         // fakeUsers
         for (let i = 0; i < 5; i++) {
-            const newFakeUser = {
+            const user = {
                 firstname: chance.first(),
                 lastname: chance.last(),
                 username: chance.animal({ type: 'pet' }),
-                role: Math.random() < 0.4 ? 'admin' : 'member',
                 birthday: chance.birthday({string: true, american: false}),
+                role: Math.random() < 0.4 ? 'admin' : 'member',
                 email: chance.email({ domain: 'example.com' }),
                 password: chance.hash({length: 10}),
                 profile: { darkmode: true },
+                // address: chance.address(),
             };
-            fakeUsers.push(newFakeUser);
+            fakeUsers.push(user);
 
-            await User.insertMany(newFakeUser);
+            await User.insertMany(user);
         }
 
         // fakeRecords
         for (let i = 0; i < 5; i++) {
-            const record = new Record({
-                firstname: chance.first(),
-                lastname: chance.last(),
-                username: chance.animal({ type: 'pet' }),
-                role: Math.random() < 0.4 ? 'admin' : 'member',
-                birthday: chance.birthday({string: true, american: false}),
-                email: chance.email({ domain: 'example.com' }),
-                password: chance.hash({length: 10}),
-                profile: { darkmode: true },
-            });
-            fakeUsers.push(record);
+            const record = {
+                title: chance.sentence({ words: 2 }),
+                artist: chance.name(),
+                year: chance.year({min: 1950, max: 2023}), 
+                price: chance.euro({ max: 25 }),
+            };
+            fakeRecords.push(record);
 
-            await Record.insertMany(fakeRecords);
+            await Record.insertMany(record);
         }
 
         //fakeOrders
         for (let i = 0; i < 5; i++) {
-            const title = chance.sentence({ words: 2 });
-            const artist = chance.animal({ type: 'ocean' });
-            const quantity = chance.integer({ min: 1, max: 10 });
+            const order = {
+                quantity: chance.integer({ min: 1, max: 10 }),
+            };
 
-            fakeOrders.push({
-                title,
-                artist,
-                quantity
-            });
+            fakeOrders.push(order);
 
-            await Order.insertMany(fakeOrders);
+            await Order.insertMany(order);
         }
 
     } catch (error) {
         console.log(error);
-
     }
 
     mongoose.connection.close();

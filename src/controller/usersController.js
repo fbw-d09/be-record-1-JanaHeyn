@@ -1,13 +1,31 @@
 const User = require('../models/User.js');
-
 /** ROUTE ('/users')*/
+// post
+// user erstellen
+const createUser = async(req, res, next) => {
+    try {
+        const { firstname, lastname, username, birthday, role, email, password, profile, address } = req.body;
+    
+        const newUser = new User({ firstname, lastname, username, birthday, role, email, password, profile, address });
+    
+        await newUser.save();
+        res.status(201).json({
+            success: true,
+            message: 'New user created!',
+            data: newUser
+        });
+    } catch(error) {
+        next(error);
+    }
+};
+
+
 // get
 // alle user anzeigen
-const getUsers = async (req, res, next) => {
+const getUsers = async(req, res, next) => {
     try {
         const users = await User.find();
         res.status(200).json({
-            success:true,
             amount: users.length,
             data: users
         })
@@ -18,37 +36,15 @@ const getUsers = async (req, res, next) => {
     }
 };
 
-// post
-// user erstellen
-const createUser = async (req, res, next) => {
-    try {
-        const { firstname, lastname, username, birthday, role, email, password, profile } = req.body;
-    
-        const newUser = new User({ firstname, lastname, username, birthday, role, email, password, profile });
-    
-        await newUser.save();
-        res.status(201).json({
-            success: true,
-            data: newUser,
-            message: 'Der user wurde angelegt.'
-        });
-    } catch(error) {
-        next(error);
-    }
-
-};
-
-
 /** ROUTE ('/users/id/') */
 // get
 // einen bestimmten user anhand der ID anzeigen
-const getUser = async (req, res, next) => {
+const getUser = async(req, res, next) => {
     try {
         const { id } = req.params;
 
         const user = await User.findById(id);
         res.status(200).json({
-            success: true,
             data: user
         });
 
@@ -59,7 +55,7 @@ const getUser = async (req, res, next) => {
 
 // put
 // bestimmten user bearbeiten
-const updateUser = async (req, res, next) => {
+const updateUser = async(req, res, next) => {
     try {
         const { id } = req.params;
         const updatedUser = req.body;
@@ -69,8 +65,7 @@ const updateUser = async (req, res, next) => {
                 new: true
             });
         res.status(201).json({
-            success: true,
-            updated: user !== null ? true : false,
+            message: 'User updated!',
             data: user
         });
     } catch(error) {
@@ -80,15 +75,28 @@ const updateUser = async (req, res, next) => {
 
 // delete
 // bestimmten user löschen
-const deleteUser = async (req, res, next) => {
+const deleteUser = async(req, res, next) => {
     try {
         const { id } = req.params;
 
         const user = await User.findByIdAndDelete(id);
         res.status(201).json({
-            success: true,
-            deleted: user !== null ? true : false,
+            message: 'User deleted!',
             data: user
+        });
+    } catch(error) {
+        next(error);
+    }
+}
+
+// /api/users
+// alle user löschen
+const deleteUsers = async (req, res, next) => {
+    try {
+        await User.deleteMany();
+        res.status(201).json({
+            success: true,
+            message: 'All users deleted'
         });
     } catch(error) {
         next(error);
@@ -100,5 +108,6 @@ module.exports = {
     getUsers,
     createUser,
     deleteUser,
-    updateUser
+    updateUser,
+    deleteUsers
 }

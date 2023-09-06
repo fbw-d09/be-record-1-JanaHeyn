@@ -1,11 +1,14 @@
-const { Schema, model } = require('mongoose');
+const mongoose = require('mongoose');
 
-const order = new Schema({
+const { recordSchema } = require('./Record');
+
+const orderSchema = new mongoose.Schema({
     title: { type: String, trim: true },
     artist: { type: String, trim: true },
-    quantity: Number
+    quantity: Number,
+    records: recordSchema
 }, { timestamps: true });
 
-const orderModel = new model('Order', order, 'orders');
+const Order = new mongoose.model('Order', orderSchema, 'orders');
 
-module.exports = orderModel;
+module.exports = Order;

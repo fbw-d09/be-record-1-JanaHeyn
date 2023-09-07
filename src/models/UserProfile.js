@@ -4,6 +4,6 @@ const userProfileSchema = new Schema({
     darkmode: Boolean
 }, { timestamps:true, id:false });
 
-const userProfileModel = new model('UserProfile', userProfileSchema, 'userProfiles');
+// const userProfileModel = new model('UserProfile', userProfileSchema, 'userProfiles');
 
-module.exports = { userProfileSchema, userProfileModel }
+module.exports = userProfileSchema;

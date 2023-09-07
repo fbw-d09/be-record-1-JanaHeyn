@@ -24,7 +24,7 @@ const createOrder = async(req, res, next) => {
 // alle order anzeigen
 const getOrders = async(req, res, next) => {
     try {
-        const orders = await Order.find();
+        const orders = await Order.find().populate('record', '-_id -__v');
         res.status(200).json({
             amount: orders.length,
             data: orders
@@ -42,7 +42,7 @@ const getOrders = async(req, res, next) => {
 const getOrder = async(req, res, next) => {
     try {
         const { id } = req.params;
-        const order = await Order.findById(id);
+        const order = await Order.findById(id).populate('record', '-_id -__v');
         res.status(200).json(order);
 
     } catch(error) {

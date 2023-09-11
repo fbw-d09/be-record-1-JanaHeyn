@@ -1,11 +1,22 @@
 const User = require('../models/User.js');
+const validator = require('express-validator');
+
 /** ROUTE ('/users')*/
 // post
 // user erstellen
 const createUser = async(req, res, next) => {
     try {
         const { firstname, lastname, username, birthday, role, email, password, profile, address } = req.body;
-    
+
+        // validationResults + Fehler
+        const error = validator.validationResult(req).errors;
+        if(error.length > 0 ) {
+            return res.status(400).json({
+                success: false,
+                message: error.map(err => err.msg)
+            });
+        };
+
         const newUser = new User({ firstname, lastname, username, birthday, role, email, password, profile, address });
     
         await newUser.save();
@@ -59,7 +70,17 @@ const getUser = async(req, res, next) => {
 const updateUser = async(req, res, next) => {
     try {
         const { id } = req.params;
+
         const updatedUser = req.body;
+
+        // validationResults + Fehler
+        const error = validator.validationResult(req).errors;
+        if(error.length > 0 ) {
+            return res.status(400).json({
+                success: false,
+                message: error.map(err => err.msg)
+            });
+        }; 
 
         const user = await User.findByIdAndUpdate(id, updatedUser, 
             {

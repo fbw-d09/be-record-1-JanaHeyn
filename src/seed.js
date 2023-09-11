@@ -27,11 +27,10 @@ const generateFakeData = async () => {
             const user = {
                 firstname: chance.first(),
                 lastname: chance.last(),
-                username: chance.animal({ type: 'zoo' }),
-                birthday: chance.birthday({string: true, american: false}),
+                username: chance.email({ domain: 'example.com' }),
+                birthday: chance.birthday({ string: true, american: false }),
                 role: Math.random() < 0.4 ? 'admin' : 'member',
-                email: chance.email({ domain: 'example.com' }),
-                password: chance.hash({length: 10}),
+                password: chance.hash({ length: 10 }),
                 profile: { darkmode: true },
                 address: {
                     street: chance.street(),

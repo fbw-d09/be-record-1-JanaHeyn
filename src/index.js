@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 
 
 /** IMPORTS */
-const { myMiddleware } = require('./middleware/myMiddleware');
+const { setCors } = require('./middleware/cors');
 const userRoutes = require('./routes/users');
 const recordRoutes = require('./routes/records');
 const orderRoutes = require('./routes/orders');
@@ -32,7 +32,7 @@ app.use(bodyParser.urlencoded({ extended:true }));
 app.use(bodyParser.json());
 // custom middleware
 // Teilaufgabe 2 (middleware)
-app.get('/api/records/middleware', myMiddleware, (req, res) => {
+app.get('/api/records/middleware', setCors, (req, res) => {
     console.log('Test...');
     res.send('middleware-test');
 })

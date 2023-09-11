@@ -9,7 +9,6 @@ const userSchema = new mongoose.Schema({
     username: { type: String, unique: true, trim: true, required: true },
     birthday: { type: String },
     role: { type: String, default: 'member' },
-    email: String,
     password: String,
     profile: userProfileSchema,
     address: addressSchema

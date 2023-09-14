@@ -5,6 +5,9 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 
 
 /** IMPORTS */
@@ -24,10 +27,11 @@ const db = mongoose
     .then(() => console.log('Connected to database'))
     .catch((err) => console.log('Connection failed', err.message));
 
-
+// console.log(crypto.randomBytes(64).toString ('hex'));
 
 /** MIDDLEWARE */
 // external middleware
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended:true }));
 app.use(bodyParser.json());
 // custom middleware

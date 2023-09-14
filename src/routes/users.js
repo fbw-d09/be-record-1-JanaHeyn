@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require('../controller/usersController.js');
 // import der validierung
 const userValidations = require('../validations/userValidations.js');
+const authUser = require('../middleware/auth_user.js');
 
 
 // /api/user
@@ -11,20 +12,29 @@ router
     .get(userController.getUsers)
     .post(
         userValidations.password,
-        // userValidations.passwordConfirmation,
         userValidations.username,
         userController.createUser)
     .delete(userController.deleteUsers);
 
+// login
+router
+    .route('/login')
+    .post(
+        userController.loginUser);
+
 // /api/users/idnummer/
 router
     .route('/:id/')
-    .get(userController.getUser)
+    .get(
+        authUser,
+        userController.getUser)
     .put(
+        authUser,
         userValidations.password,
-        // userValidations.passwordConfirmation,
         userValidations.username,
         userController.updateUser)
-    .delete(userController.deleteUser);
+    .delete(
+        // authorized,
+        userController.deleteUser);
 
 module.exports = router;

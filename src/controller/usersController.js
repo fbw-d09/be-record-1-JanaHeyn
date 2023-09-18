@@ -33,44 +33,63 @@ const createUser = async(req, res, next) => {
             data: newUser
         });
     } catch(error) {
-        console.log(error);
+        // console.log(error);
         next(error);
     }
 };
 
-
 // get
 // alle user anzeigen
 const getUsers = async(req, res, next) => {
+    // console.log('role:', req.role);
     try {
         const users = await User.find();
         res.status(200).json({
+            success: true,
+            message: `You are ${req.role}`,
             amount: users.length,
             data: users
-        })
-
+        });
     } catch(error) {
-        next(error)
-
+        // console.log(error);
+        next(error);
     }
 };
+
+// delete
+// alle user löschen
+const deleteUsers = async (req, res, next) => {
+    try {
+        await User.deleteMany();
+        res.status(201).json({
+            success: true,
+            message: 'All users deleted'
+        });
+    } catch(error) {
+        next(error);
+    }
+}
+
 
 /** ROUTE ('/users/id/') */
 // get
 // einen bestimmten user anhand der ID anzeigen
 const getUser = async(req, res, next) => {
-    // console.log('loggedinid', req.loggedInId);
     const { id } = req.params;
+    // console.log('loggedinid', req.loggedInId);
+    // console.log('role:', req.role);
 
     try {
         if(req.loggedInId === id) {
             const user = await User.findById(id);
             res.status(200).json({
+                success: true,
+                role: req.role,
                 data: user
             });
         } else {
             res.status(400).json({
-                message: 'user not auhtorized!'
+                message: 'User not auhtorized!'
             });
         }
 
@@ -125,29 +144,17 @@ const deleteUser = async(req, res, next) => {
     }
 }
 
-// /api/users
-// alle user löschen
-const deleteUsers = async (req, res, next) => {
-    try {
-        await User.deleteMany();
-        res.status(201).json({
-            success: true,
-            message: 'All users deleted'
-        });
-    } catch(error) {
-        next(error);
-    }
-}
 
+/** ROUTE ('/users/login')*/
+// post
 const loginUser = async (req, res, next) => {
     try {
         const { username, password } = req.body;
         const user = await User.findOne({username});     
     
         if(user) {
-
             if(user.comparePassword(password)) {
-                const token = jwt.sign({ username, id: user._id }, process.env.SECRET_TOKEN);
+                const token = jwt.sign({ username, id: user._id, role: user.role }, secret);
     
                 res
                 .cookie('access_token', token,
@@ -158,7 +165,7 @@ const loginUser = async (req, res, next) => {
                 .status(200)
                 .json({
                     success: true,
-                    mesage: `user ${username} eingeloggt`
+                    mesage: `User ${username} logged in and is ${user.role}`
                 });
 
             } else {
@@ -180,6 +187,19 @@ const loginUser = async (req, res, next) => {
     }
 }
 
+
+/** ROUTE ('/users/logout')*/
+// post
+const clearCookie = (req, res) => {
+    return res
+            .clearCookie('access_token')
+            .status(200)
+            .json({
+                success: true,
+                message: 'Successfully logged out!'
+            });
+}
+
 module.exports = {
     getUser,
     getUsers,
@@ -187,5 +207,6 @@ module.exports = {
     deleteUser,
     updateUser,
     deleteUsers,
-    loginUser
+    loginUser,
+    clearCookie
 }

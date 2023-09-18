@@ -2,25 +2,30 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controller/usersController.js');
 // import der validierung
-const userValidations = require('../validations/userValidations.js');
-const authUser = require('../middleware/auth_user.js');
+const userValidationPost = require('../validations/userValidationPost.js');
+const userValidationPut = require('../validations/userValidationPut.js');
+const authUser = require('../middleware/authUser.js');
+const authAdmin = require('../middleware/authAdmin.js');
 
-
-// /api/user
-router
-    .route('/')
-    .get(userController.getUsers)
-    .post(
-        userValidations.password,
-        userValidations.username,
-        userController.createUser)
-    .delete(userController.deleteUsers);
-
-// login
+// /api/users/login
 router
     .route('/login')
     .post(
         userController.loginUser);
+
+// /api/users
+router
+    .route('/')
+    .get(
+        authAdmin,
+        userController.getUsers)
+    .post(
+        userValidationPost.password,
+        userValidationPost.username,
+        userController.createUser)
+    .delete(
+        authAdmin,
+        userController.deleteUsers);
 
 // /api/users/idnummer/
 router
@@ -30,11 +35,18 @@ router
         userController.getUser)
     .put(
         authUser,
-        userValidations.password,
-        userValidations.username,
+        userValidationPut.password,
+        userValidationPut.username,
         userController.updateUser)
     .delete(
-        // authorized,
+        authUser,
         userController.deleteUser);
+
+// /api/users/logout/
+router
+    .route('/logout')
+    .post(
+        authUser, 
+        userController.clearCookie);
 
 module.exports = router;

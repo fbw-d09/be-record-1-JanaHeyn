@@ -3,10 +3,7 @@
 /** EXTERNAL DEPENDENCIES */ 
 require('dotenv').config();
 const express = require('express');
-const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const crypto = require('crypto');
-const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 
 
@@ -29,11 +26,12 @@ const db = mongoose
 
 // console.log(crypto.randomBytes(64).toString ('hex'));
 
+
 /** MIDDLEWARE */
 // external middleware
 app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended:true }));
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended:true }));
+app.use(express.json());
 // custom middleware
 // Teilaufgabe 2 (middleware)
 app.get('/api/records/middleware', setCors, (req, res) => {
@@ -42,13 +40,11 @@ app.get('/api/records/middleware', setCors, (req, res) => {
 })
 
 
-
 /** ROUTES */
 // Teilaufgabe 3: Routes
 app.use('/api/users', userRoutes);
 app.use('/api/records', recordRoutes);
 app.use('/api/orders', orderRoutes);
-
 
 
 /** ERROR HANDLING */
@@ -61,14 +57,14 @@ app.use((req, res, next) => {
 
 // 2. Fehler ausgeben:
 app.use((error, req, res, next) => {
-    res.status(error.status || 500);
-    res.json({
-        error: {
-            message: error.message
-        }
+     return res
+        .status(error.status || 500)
+        .json({
+            error: {
+                message: error.message
+            }
     });
 });
-
 
 
 /** LISTENER */

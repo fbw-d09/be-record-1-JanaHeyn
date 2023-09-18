@@ -11,7 +11,8 @@ router
 // /api/records/idnummer
 router  
     .route('/:id')
-    .get(getRecord)
+    .get(
+        getRecord)
     .put(updateRecord)
     .delete(deleteRecord);
 

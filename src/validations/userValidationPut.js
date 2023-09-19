@@ -4,12 +4,13 @@ const validator = require('express-validator');
 const password = validator.body('password')
     .not()
     .isEmpty()
-    .optional()
+    .withMessage('Password must not be empty!')
     .isLength({ min: 8 })
     .withMessage('Password must be at least 8 characters!')
     .not()
     .isIn(['password', 'passwort', 'password123', 'passwort123', 'test1234', '00000000', 'hallo123', 'helloworld', 'hallowelt', '12345678'])
-    .withMessage('Invalid password!');
+    .withMessage('Invalid password!')
+    .optional();
 
 // username = email ?
 const username = validator.body('username')

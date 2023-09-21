@@ -20,7 +20,7 @@ const authAdmin = (req, res, next) => {
             console.log('User is admin!');
             next();
         } else {
-            throw new Error('User is not admin!');
+            console.log('User is not admin!');
         }
 
     } catch(error) {

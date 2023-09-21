@@ -16,8 +16,7 @@ const authUser = (req, res, next) => {
         req.loggedInId = user.id;
         req.role = user.role;
         // console.log(req.loggedInId);
-        // console.log(req.role);
-        
+        // console.log(req.role); 
         next();
 
     } catch(error) {

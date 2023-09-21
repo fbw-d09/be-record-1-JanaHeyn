@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const crypto = require('crypto');
 const secret = process.env.SECRET_TOKEN;
 const userProfileSchema = require('./UserProfile.js');
-const addressSchema = require('./Address.js');
+// const {addressSchema, Address} = require('./Address.js');
 
 const userSchema = new mongoose.Schema({
     firstname: { type: String, trim: true, required: true },
@@ -12,11 +12,15 @@ const userSchema = new mongoose.Schema({
     role: { type: String, default: 'member' },
     password: { type: String, required: true },
     profile: userProfileSchema,
-    address: addressSchema
+    address: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Address'
+    }
     // address: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Address'
+    //     street: String,
+    //     city: String
     // }
+    // address: addressSchema
 
 }, { timestamps: true });
 

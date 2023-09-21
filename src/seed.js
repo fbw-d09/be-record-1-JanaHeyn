@@ -3,6 +3,8 @@ require('dotenv').config();
 const Chance = require('chance');
 const mongoose = require('mongoose');
 const chance = new Chance();
+const crypto = require('crypto');
+const secret = process.env.SECRET_TOKEN;
 
 /** ERSTELLUNG DER VERBINDUNG */
 const databaseUrl = `${process.env.DB_URL}/${process.env.DB_NAME}`;
@@ -22,27 +24,34 @@ const generateFakeData = async () => {
         const fakeRecords = [];
         // const fakeOrders = [];
 
-        // fakeUsers
+//         // fakeUsers
         for (let i = 0; i < 5; i++) {
-            const user = {
+            const user = new User({
                 firstname: chance.first(),
                 lastname: chance.last(),
                 username: chance.email({ domain: 'example.com' }),
                 birthday: chance.birthday({ string: true, american: false }),
                 role: Math.random() < 0.4 ? 'admin' : 'member',
-                password: chance.hash({ length: 10 }),
+                // password: chance.hash({ length: 10 }),
+                password: String,
+                // password
                 profile: { darkmode: true },
                 address: {
                     street: chance.street(),
                     city: chance.city()
                 }
-            };
+            });
+            hashPassword = (password) => {
+                return crypto.createHmac('sha256', secret).update(password).digest('hex');
+            }
+            
+
             fakeUsers.push(user);
 
             await User.insertMany(user);
         }
 
-        // fakeRecords
+//         // fakeRecords
         for (let i = 0; i < 5; i++) {
             const record = {
                 title: chance.sentence({ words: 2 }),
@@ -55,7 +64,7 @@ const generateFakeData = async () => {
             await Record.insertMany(record);
         }
 
-        //fakeOrders
+        // fakeOrders
         // for (let i = 0; i < 5; i++) {
         //     const order = {
         //         quantity: chance.integer({ min: 1, max: 10 }),

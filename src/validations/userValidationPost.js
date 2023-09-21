@@ -2,6 +2,9 @@ const validator = require('express-validator');
 
 // prüfen ob passwort den vorgaben entspricht
 const password = validator.body('password')
+    .not()
+    .isEmpty()
+    .withMessage('Password must not be empty!')
     .isLength({ min: 8})
     .withMessage('Password must be at least 8 characters!')
     .not()
